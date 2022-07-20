@@ -1,0 +1,36 @@
+{
+  "name": "@hiraokahypertools/msg_to_eml",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "kenjiuno",
+  "repository": "github:HiraokaHyperTools/msg_to_eml",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run mocha",
+    "prepare": "npm run build && npm run test",
+    "mocha": "set NODE_ENV=test && mocha",
+    "dr": "npm publish --dry-run"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "@kenjiuno/decompressrtf": "^0.1.4",
+    "@kenjiuno/msgreader": "^1.15.0-alpha.1",
+    "commander": "^9.4.0",
+    "iconv-lite": "^0.6.3",
+    "nodemailer": "^6.7.7",
+    "rtf-stream-parser": "^3.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.5",
+    "mocha": "^10.0.0",
+    "typescript": "^4.7.4"
+  }
+}
