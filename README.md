@@ -1,5 +1,7 @@
 # msg_to_eml
 
+Links: [_typedoc documentation_](https://hiraokahypertools.github.io/msg_to_eml/typedoc/)
+
 Installation
 
 ```bat
