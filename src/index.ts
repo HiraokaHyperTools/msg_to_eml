@@ -121,10 +121,11 @@ export class ParsedMsg {
   public get msgInfo() { return this._msgInfo; }
 
   /**
-   * Decide convertibility delivered from message class.
+   * Check `.msg` file usage
    * 
-   * - vCard, if `IPM.Contact`
-   * - EML, if `IPM.Note`
+   * @returns
+   * - This will return `IPM.Contact` for contact.
+   * - This will return `IPM.Note` for EML.
    */
   public get messageClass(): string { return this._msgInfo.messageClass; }
 
