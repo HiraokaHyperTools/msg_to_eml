@@ -2,7 +2,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
-const generate = false;
+const generate = true;
 
 describe('MsgConverter', function () {
   const { MsgConverter } = require('../lib/index');
@@ -12,49 +12,81 @@ describe('MsgConverter', function () {
     assert.notEqual(new MsgConverter(), null);
   });
 
-  describe('Conversion exact match', function () {
-    const converter = new MsgConverter({
-      baseBoundary: "42fb9c3c-c8ed-4b9b-aebf-8379cb3000d5",
-      messageId: "cea35f87-010e-4e67-b059-9bb20b55b27c",
-      ansiEncoding: "cp932",
+  describe('vCard', function () {
+    describe('Conversion exact match', function () {
+      const converter = new MsgConverter({
+        baseBoundary: "42fb9c3c-c8ed-4b9b-aebf-8379cb3000d5",
+        messageId: "cea35f87-010e-4e67-b059-9bb20b55b27c",
+        ansiEncoding: "cp932",
+      });
+
+      function consume(baseName) {
+        return async function () {
+          const msgBuf = await fs.promises.readFile(path.join(__dirname, `${baseName}.msg`));
+          const actual = await (await converter.parse(msgBuf)).toVCardStr();
+          if (generate) {
+            fs.promises.writeFile(path.join(__dirname, `${baseName}.vcf`), actual);
+          }
+          else {
+            const expected = await fs.promises.readFile(
+              path.join(__dirname, `${baseName}.vcf`),
+              { encoding: 'utf-8' }
+            );
+            assert.equal(actual, expected);
+          }
+        }
+      }
+
+      it("contactAnsi", consume("contactAnsi"));
+      it("contactUnicode", consume("contactUnicode"));
     });
+  });
 
-    function consumeBad(baseName) {
-      return async function () {
-        const msgBuf = await fs.promises.readFile(path.join(__dirname, `${baseName}.msg`));
-        try {
-          await converter.convertToString(msgBuf);
-          assert.fail('must fail');
-        }
-        catch (ex) {
-          assert.throws(() => { throw ex }, new Error("MSG file parser error: Unsupported file type!"));
+  describe('EML', function () {
+    describe('Conversion exact match', function () {
+      const converter = new MsgConverter({
+        baseBoundary: "42fb9c3c-c8ed-4b9b-aebf-8379cb3000d5",
+        messageId: "cea35f87-010e-4e67-b059-9bb20b55b27c",
+        ansiEncoding: "cp932",
+      });
+
+      function consumeBad(baseName) {
+        return async function () {
+          const msgBuf = await fs.promises.readFile(path.join(__dirname, `${baseName}.msg`));
+          try {
+            await converter.convertToString(msgBuf);
+            assert.fail('must fail');
+          }
+          catch (ex) {
+            assert.throws(() => { throw ex }, new Error("MSG file parser error: Unsupported file type!"));
+          }
         }
       }
-    }
 
-    function consume(baseName) {
-      return async function () {
-        const msgBuf = await fs.promises.readFile(path.join(__dirname, `${baseName}.msg`));
-        const emlStrActual = await converter.convertToString(msgBuf);
-        if (generate) {
-          fs.promises.writeFile(path.join(__dirname, `${baseName}.eml`), emlStrActual);
-        }
-        else {
-          const emlStrExpected = await fs.promises.readFile(
-            path.join(__dirname, `${baseName}.eml`),
-            { encoding: 'utf-8' }
-          );
-          assert.equal(emlStrActual, emlStrExpected);
+      function consume(baseName) {
+        return async function () {
+          const msgBuf = await fs.promises.readFile(path.join(__dirname, `${baseName}.msg`));
+          const emlStrActual = await converter.convertToString(msgBuf);
+          if (generate) {
+            fs.promises.writeFile(path.join(__dirname, `${baseName}.eml`), emlStrActual);
+          }
+          else {
+            const emlStrExpected = await fs.promises.readFile(
+              path.join(__dirname, `${baseName}.eml`),
+              { encoding: 'utf-8' }
+            );
+            assert.equal(emlStrActual, emlStrExpected);
+          }
         }
       }
-    }
 
-    it("dummy (bad data test)", consumeBad("dummy"));
-    it("msgInMsg", consume("msgInMsg"));
-    it("msgInMsgInMsg", consume("msgInMsgInMsg"));
-    it("nonUnicodeCP932", consume("nonUnicodeCP932"));
-    it("nonUnicodeMail", consume("nonUnicodeMail"));
-    it("test1", consume("test1"));
-    it("unicode1", consume("unicode1"));
+      it("dummy (bad data test)", consumeBad("dummy"));
+      it("msgInMsg", consume("msgInMsg"));
+      it("msgInMsgInMsg", consume("msgInMsgInMsg"));
+      it("nonUnicodeCP932", consume("nonUnicodeCP932"));
+      it("nonUnicodeMail", consume("nonUnicodeMail"));
+      it("test1", consume("test1"));
+      it("unicode1", consume("unicode1"));
+    });
   });
 });

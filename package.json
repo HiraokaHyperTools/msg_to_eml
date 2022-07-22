@@ -1,6 +1,6 @@
 {
   "name": "@hiraokahypertools/msg_to_eml",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "kenjiuno",
@@ -22,7 +22,7 @@
   ],
   "dependencies": {
     "@kenjiuno/decompressrtf": "^0.1.4",
-    "@kenjiuno/msgreader": "^1.15.0-alpha.1",
+    "@kenjiuno/msgreader": "^1.16.0-alpha.2",
     "commander": "^9.4.0",
     "iconv-lite": "^0.6.3",
     "nodemailer": "^6.7.7",

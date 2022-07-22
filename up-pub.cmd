@@ -1,0 +1,1 @@
+yarn add -D "@kenjiuno/msgreader@latest" && yarn && pause && pause && npm pu
